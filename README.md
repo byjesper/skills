@@ -22,7 +22,8 @@ rather than trusting them after a dependency bump.
 
 ## Curated
 
-All four come from [mattpocock/skills](https://github.com/mattpocock/skills), modified here.
+All five come from [mattpocock/skills](https://github.com/mattpocock/skills). Most are
+modified; `wait-what` is carried verbatim.
 
 | Skill | Original | How mine differs |
 |-------|----------|------------------|
@@ -30,6 +31,7 @@ All four come from [mattpocock/skills](https://github.com/mattpocock/skills), mo
 | [`handoff`](./handoff) | [productivity/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff) | Prints the handoff to the screen so I can decide where it goes — a file, a GitHub issue comment, or somewhere else — instead of writing it to the OS temp directory. |
 | [`to-prd`](./to-prd) | [engineering/to-spec](https://github.com/mattpocock/skills/tree/main/skills/engineering/to-spec) (renamed upstream) | Keeps PRD wording, and adds the two-location workflow: the tracker issue is canonical, with a durable in-repo mirror under `docs/prd/` alongside `docs/adr/`. Also covers project-board membership and issue types. |
 | [`to-issues`](./to-issues) | [engineering/to-tickets](https://github.com/mattpocock/skills/tree/main/skills/engineering/to-tickets) (renamed upstream) | Keeps issue wording, and adds native sub-issue linking, a `## Build order` section on the parent, and explicit guidance on shaping slices for parallel agents in isolated worktrees. |
+| [`wait-what`](./wait-what) | [productivity/wait-what](https://github.com/mattpocock/skills/tree/main/skills/productivity/wait-what) | Unmodified. Stops a reply that didn't land and asks for it again in [ASD-STE100](https://www.asd-ste100.org/) Simplified Technical English, using the project's `CONTEXT.md` vocabulary. |
 
 Upstream renamed `to-prd` → `to-spec` and `to-issues` → `to-tickets`. I kept the older names
 because mine have diverged enough that they are no longer the same skill.
