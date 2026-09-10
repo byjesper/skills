@@ -14,8 +14,18 @@ and so on.
 |-------|--------------|
 | [`filament-5`](./filament-5) | Building admin panels with Filament 5 — resources, forms, tables, infolists, actions, widgets, panels, theming. A short entry point plus nine topic references. |
 | [`nativephp-desktop`](./nativephp-desktop) | Shipping Laravel apps as desktop apps with [NativePHP for Desktop](https://nativephp.com) 2.x — windows, menus, system APIs, builds and distribution, v1 upgrades. |
+| [`orchestrate-implementors`](./orchestrate-implementors) | Running work as an orchestrator plus implementing agents: spawning through Solo, parallel git worktrees, briefing, adversarial review, integration. Mostly a catalogue of setup mistakes that fail *silently* — the affected agent reports success. |
+| [`unattended-run`](./unattended-run) | Sits on top of `orchestrate-implementors` for runs nobody is watching: the decision contract that replaces asking, the state file that survives compaction, pre-registering the stop condition, and harvesting the traps. |
 
-Both are written against pinned versions and say so in the skill itself. `nativephp-desktop`
+`orchestrate-implementors` and `unattended-run` are a pair: the first governs any
+orchestrated run, the second adds only what changes when nobody is watching. The split is
+deliberate — the verification discipline ("a green suite is not evidence") lives in the
+first, because filing it under "overnight" would make it read as optional on an ordinary
+day. Both carry their measurements with dates, so the next agent does not retake them; the
+examples are PHP/Composer because that is where they were measured, but the rules are not
+language-specific.
+
+Both reference skills are written against pinned versions and say so in the skill itself. `nativephp-desktop`
 carries a provenance table naming the exact package versions and the date its claims were
 checked; treat filesystem paths and build outputs in it as perishable and re-check them
 rather than trusting them after a dependency bump.
