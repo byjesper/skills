@@ -29,21 +29,28 @@ Every silent failure below was first found in a browser, with a green suite.
 `->records()` has none. Put the total in the table's `->description()` or heading instead
 — native, no CSS, and assertable.
 
+### Do not put a paginated table inside a modal over a paginated page
+
+Two pagers on one document share one query string. The collision surfaces in stages: first a
+shared `page` parameter, so opening the modal from page 2 of the list shows an empty table;
+then, once you give the child its own page name, an inert pager; then a page that survives the
+modal's closing. Each fix reveals the next layer, because the fault is the nesting, not any of
+them.
+
+If a preview or a picker needs pagination, give it a surface that is not inside a paginated
+page. Removing the pager is usually cheaper than sharing the state correctly.
+
 ### A hand-built paginator must carry the table's page name, or the pager goes inert
 
 Filament's pager writes `gotoPage(n, '<name>')` into every button from **the paginator's**
 `getPageName()`, while the table reads **`getTablePaginationPageName()`**. A
-`new LengthAwarePaginator(...)` defaults to Laravel's `page`, so the moment the table
-declares its own page name the two diverge: right totals, right links, and clicking one
-does nothing at all.
+`new LengthAwarePaginator(...)` defaults to Laravel's `page`, so the moment the table has its
+own page name the two diverge: right totals, right links, and clicking one does nothing.
 
-Pass `['pageName' => $this->getTablePaginationPageName()]` in the paginator's options.
-Prefer overriding `getTablePaginationPageName()` to `->queryStringIdentifier()`, because
-the identifier resolves through `getTable()`, which `mount()` cannot call.
-
-**A table inside a modal needs its own page name regardless** — otherwise it reads and
-writes the host page's `page` parameter, so opening a modal from page 2 of the page behind
-it shows page 2 of the modal's table, which for a short list is empty.
+Pass `['pageName' => $this->getTablePaginationPageName()]` in the paginator's options, and set
+the name by overriding `getTablePaginationPageName()` rather than with
+`->queryStringIdentifier()` — the identifier resolves through `getTable()`, which `mount()`
+cannot call.
 
 ### Asserting pagination by setting the page property cannot see any of that
 
@@ -143,9 +150,36 @@ A component embedded in a schema is serialised between requests, so pass identif
 re-resolve inside the component. Re-resolving is also where ownership is enforced: do not
 trust a record handed down from the parent.
 
-Mark any property the component must not accept from the browser `#[Locked]`. A component
-that takes a filesystem path and leaves it unlocked lets a viewer point it at any file the
-process can read.
+### An embedded child that the host has rendered before is stubbed, and keeps everything
+
+When the host has already rendered a child under the same key, `Livewire::mount()`
+short-circuits to a stub: no `boot`, no `mount`, no `booted`, no render, and **every prop it is
+passed is dropped**. The child goes on showing the previous record's data with nothing in it
+able to notice. Filament's partial rendering makes a reused child the normal case rather than
+the exception, because children are pruned only by a full render that does not mount them.
+
+A `#[Reactive]` prop is the one thing Livewire pushes into a stubbed child, during `hydrate`,
+before all three hooks. So a reset that must happen when a prop changes cannot live in a
+lifecycle hook — it will not run.
+
+### `#[Reactive]` is not a guard; declare `#[Locked]` as well
+
+`#[Reactive]`'s refusal is `CannotMutateReactivePropException` at **dehydrate**, the last
+phase — by which time a crafted `update` has been applied and `render()` has already acted on
+it. For a property holding a filesystem path, that means the file is opened and parsed before
+anything objects. `#[Locked]` is the guard: `BaseLocked::update()` throws before the property
+is written, and it does not interfere with reactivity, because a reactive value never travels
+through the `update` phase.
+
+Declare both.
+
+### A test can see which child the host rendered, but not what a stubbed child kept
+
+`memo.children` is in the host's snapshot, so an assertion can prove the host handed the child
+a new key. It cannot prove what a *stubbed* child retained, because the harness's own
+`->toHtml()` on a mounted schema runs outside a request and mounts fresh. Confirm that class of
+behaviour in a browser — with a new tab per run, since `wire:navigate` restores the previous
+DOM, snapshots and memo included, so "navigated back" is not "a new tab".
 
 ### Layout components and entries live in different namespaces
 
