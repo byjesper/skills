@@ -31,6 +31,13 @@ code-heavy guide. Do not guess at an API surface that a reference documents.
 | Dashboard stats and charts | `references/widgets.md` |
 | Relation managers, Select/Repeater relationships | `references/relationships.md` |
 | Create/edit hooks, mutating form data | `references/lifecycle-hooks.md` |
+| **It renders but does nothing, or the tests pass and the browser disagrees** | **`references/gotchas.md`** |
+
+**Read `references/gotchas.md` before debugging a Filament behaviour that "should work".**
+It collects the failures that are silent — a pager whose buttons do nothing, a relation
+manager that never boots, a modal absent from a test's `html()`, a field dropped on save —
+each with the symptom first, because the symptom is what you arrive with. Most of them
+cost hours before they were understood once.
 
 ## Architecture
 
